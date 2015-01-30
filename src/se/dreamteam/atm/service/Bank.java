@@ -1,6 +1,7 @@
 package se.dreamteam.atm.service;
 
-public class Bank
+public interface Bank
 {
-
+	String getBankId();
+	long getBalance(String accountHolderId);
 }
