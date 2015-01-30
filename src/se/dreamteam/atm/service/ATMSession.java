@@ -1,6 +1,12 @@
 package se.dreamteam.atm.service;
 
-public class ATMSession
-{
+import se.dreamteam.atm.model.ATMReceipt;
 
+public interface ATMSession
+{
+	long withdrawAmount(int amount);
+	
+	ATMReceipt requestReceipt(long transactionId);
+	
+	long checkBalance();
 }

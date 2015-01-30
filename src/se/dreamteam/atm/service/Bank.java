@@ -4,4 +4,5 @@ public interface Bank
 {
 	String getBankId();
 	long getBalance(String accountHolderId);
+	//Fler metoder
 }

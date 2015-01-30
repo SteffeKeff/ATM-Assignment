@@ -1,6 +1,6 @@
 package se.dreamteam.atm.model;
 
-public class ATMCard
+public final class ATMCard
 {
 	private final String accountHolderId;
 	private final String bankId;
