@@ -1,5 +1,6 @@
 package se.dreamteam.atm.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,11 +10,18 @@ import se.dreamteam.atm.model.ATMCard;
 
 public final class ATM
 {
-	private final Map<String, Bank> banks;
+	private final Map<String, Bank> banks = new HashMap<>();
 
 	public ATM(List<Bank> banks)
 	{
-		// To be implemented
+		if (banks.isEmpty())
+		{
+			throw new IllegalArgumentException("Bank list is empty");
+		}
+		
+		for(Bank bank: banks){
+			this.banks.put(bank.getBankId(),bank);
+		}
 	}
 
 	public ATMSession verifyPin(int pin, ATMCard card)
