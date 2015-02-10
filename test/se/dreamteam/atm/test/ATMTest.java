@@ -117,7 +117,7 @@ public final class ATMTest
 	}
 
 	@Test
-	public final void ATMExceptionThrownWhenExitSessionMethodCalledTwice()
+	public final void ATMExceptionThrownWhenWithdrawAmountCalledTwice()
 	{
 		expectedException.expect(ATMException.class);
 		expectedException.expectMessage("ATM Session has expired");
@@ -125,6 +125,17 @@ public final class ATMTest
 		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
 		ATMSI.withdrawAmount(1000);
 		ATMSI.withdrawAmount(1500);
+	}
+	
+	@Test
+	public final void ATMExceptionThrownWhenCheckBalanceCalledTwice()
+	{
+		expectedException.expect(ATMException.class);
+		expectedException.expectMessage("ATM Session has expired");
+
+		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSI.checkBalance();
+		ATMSI.checkBalance();
 	}
 
 	@Test
