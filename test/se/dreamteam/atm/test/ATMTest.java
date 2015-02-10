@@ -66,23 +66,25 @@ public final class ATMTest
 		reset(bank);
 	}
 
-	@Test
-	public final void ATMExceptionThrownWhenInvalidAmountIsGiven()
+	@Test(expected = ATMException.class)
+	public final void shouldThrowATMExceptionIfValueLowerThan100()
 	{
-		expectedException.expect(ATMException.class);
-		expectedException.expectMessage("The amount is not valid");
+		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSI.withdrawAmount(90);
+	}
 
-		ATMSession ATMSI;
-		ATMSI = atm.verifyPin(correctPin, atmCard1);
+	@Test(expected = ATMException.class)
+	public final void shouldThrowATMExceptionIfValueBiggerThan10000()
+	{
+		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSI.withdrawAmount(10001);
+	}
 
-		assertThat("should not be enable to withdraw an invalid amount of money,",
-				ATMSI.withdrawAmount(10), is(10L));
-
-		assertThat("should not be enable to withdraw an invalid amount of money,",
-				ATMSI.withdrawAmount(11000), is(11000L));
-
-		assertThat("should not be enable to withdraw an invalid amount of money,",
-				ATMSI.withdrawAmount(101), is(101L));
+	@Test(expected = ATMException.class)
+	public final void shouldThrowATMExceptionifValueIsNotEven()
+	{
+		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSI.withdrawAmount(189);
 	}
 
 	@Test
@@ -103,14 +105,11 @@ public final class ATMTest
 		atm.verifyPin(correctPin, atmCard2);
 	}
 
-	@Test
+	@Test(expected = ATMException.class)
 	public final void ATMExceptionThrownWhenExitSessionMethodCalledTwice()
 	{
-		expectedException.expect(ATMException.class);
-		expectedException.expectMessage("Session is terminated");
-		
+		expectedException.expectMessage("Session was terminated");
 		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
-		
 		ATMSI.withdrawAmount(1000);
 		ATMSI.withdrawAmount(1500);
 	}
@@ -121,20 +120,17 @@ public final class ATMTest
 		fail();
 	}
 
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public final void IllegalArgumentExceptionThrownWhenATMInitiatedWithEmptyArray()
 	{
-		expectedException.expect(IllegalArgumentException.class);
 		expectedException.expectMessage("Bank list is empty");
-
 		atm = new ATM(new ArrayList<Bank>());
 	}
 
-	@Test
+	@Test(expected = ATMException.class)
 	public final void ATMExceptionThrownWhenLargerAmountWithdrawnThanBalance()
 	{
-		expectedException.expect(ATMException.class);
-		expectedException.expectMessage("Not enough money");
+		expectedException.expectMessage("The amount is not valid");
 		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
 		ATMSI.withdrawAmount(3001);
 	}

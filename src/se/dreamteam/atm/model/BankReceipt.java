@@ -9,12 +9,12 @@ public final class BankReceipt
 	private final int amount;
 	private final Date date;
 
-	public BankReceipt(String bankId, long transactionId, int amount, Date date)
+	public BankReceipt(String bankId, long transactionId, int amount)
 	{
 		this.bankId = bankId;
 		this.transactionId = transactionId;
 		this.amount = amount;
-		this.date = date;
+		this.date = new Date();
 	}
 
 	public String getBankId()

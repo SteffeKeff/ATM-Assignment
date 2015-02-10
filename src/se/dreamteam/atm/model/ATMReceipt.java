@@ -8,7 +8,7 @@ public final class ATMReceipt
 	private final int amount;
 	private final Date date;
 	
-	public ATMReceipt(long transactionId, int amount, Date date)
+	public ATMReceipt(final long transactionId, final int amount)
 	{
 		this.transactionId = transactionId;
 		this.amount = amount;

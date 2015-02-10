@@ -1,46 +1,90 @@
 package se.dreamteam.atm.service;
 
+import java.util.Date;
+
 import se.dreamteam.atm.exception.ATMException;
 import se.dreamteam.atm.model.ATMCard;
 import se.dreamteam.atm.model.ATMReceipt;
 import se.dreamteam.atm.model.BankReceipt;
 
-public class ATMSessionImpl extends AbstractATMSession
+public final class ATMSessionImpl extends AbstractATMSession
 {
-	private boolean terminatedSession;
+	private long transactionID;
+	private int amount;
+	private Date date;
 
-	public ATMSessionImpl(ATMCard atmCard, Bank bank)
+	public ATMSessionImpl(final ATMCard atmCard,final Bank bank)
 	{
 		super(atmCard, bank);
+		date = new Date();
 	}
 
 	@Override
-	public long withdrawAmount(int amount)
+	public long withdrawAmount(final int amount)
 	{
-		if(terminatedSession) throw new ATMException("Session is terminated");
-		if (amount > checkBalance()) throw new ATMException("Not enough money");
-		if (amount < 100 || amount > 10000 || amount % 100 != 0)
+		if (transactionID == 0)
 		{
+			if (amount >= 100 && amount <= 10000 && amount % 100 == 0)
+			{
+				if (bank.getBalance(atmCard.getAccountHolderId()) > amount)
+				{
+					transactionID = hashCode();					
+					this.amount = (int) bank.withdrawAmount(amount);
+					System.out.println("inside withdrawAmount :"+ this.amount);
+					return this.amount;
+				}
+				throw new ATMException("Not enough funds");
+			}
 			throw new ATMException("The amount is not valid");
 		}
-		else
-		{
-			terminatedSession = true;
-			return bank.withdrawAmount(amount);
-		}
+		throw new ATMException("Session was terminated");
 	}
 
 	@Override
-	public ATMReceipt requestReceipt(long transactionId)
+	public ATMReceipt requestReceipt(final long transactionId)
 	{
-		BankReceipt bankReceipt = bank.requestReceipt(transactionId);
-		return new ATMReceipt(bankReceipt.getTransactionId(), bankReceipt.getAmount(), bankReceipt.getDate());
+		return new ATMReceipt(transactionId, this.amount);
 	}
 
 	@Override
 	public long checkBalance()
 	{
-		return bank.getBalance(atmCard.getAccountHolderId());
+		if (transactionID == 0)
+		{
+			transactionID = hashCode();
+			return bank.getBalance(atmCard.getAccountHolderId());
+		}
+		throw new ATMException("ATM Session has expired");
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		return result;
+	}
+	
+	@Override
+	public boolean equals(final Object obj)
+	{
+		if (this == obj) { return true; }
+		if (obj == null) { return false; }
+		if (getClass() != obj.getClass()) { return false; }
+		ATMSessionImpl other = (ATMSessionImpl) obj;
+		if (date == null)
+		{
+			if (other.date != null) return false;
+		}
+		else if (!date.equals(other.date)) { return false; }
+		return true;
 	}
 
+	@Override
+	public long getTransactionId()
+	{
+		if(transactionID != 0) return transactionID;
+		throw new ATMException("Not valid request");
+	}
 }

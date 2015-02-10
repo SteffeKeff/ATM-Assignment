@@ -4,9 +4,11 @@ import se.dreamteam.atm.model.ATMReceipt;
 
 public interface ATMSession
 {
-	long withdrawAmount(int amount);
+	long withdrawAmount(final int amount);
 	
-	ATMReceipt requestReceipt(long transactionId);
+	ATMReceipt requestReceipt(final long transactionId);
 	
 	long checkBalance();
+	
+	long getTransactionId();
 }
