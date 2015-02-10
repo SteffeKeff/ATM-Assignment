@@ -12,19 +12,20 @@ public final class ATM
 {
 	private final Map<String, Bank> banks = new HashMap<>();
 
-	public ATM(List<Bank> banks)
+	public ATM(final List<Bank> banks)
 	{
 		if (banks.isEmpty())
 		{
 			throw new IllegalArgumentException("Bank list is empty");
 		}
-		
-		for(Bank bank: banks){
-			this.banks.put(bank.getBankId(),bank);
+
+		for (Bank bank : banks)
+		{
+			this.banks.put(bank.getBankId(), bank);
 		}
 	}
 
-	public ATMSession verifyPin(int pin, ATMCard card)
+	public ATMSession verifyPin(final int pin, final ATMCard card)
 	{
 		if (card.verifyPin(pin))
 		{
@@ -33,7 +34,7 @@ public final class ATM
 		throw new ATMSecurityException("Invalid pincode");
 	}
 
-	private Bank getBank(ATMCard card)
+	private Bank getBank(final ATMCard card)
 	{
 		if (banks.containsKey(card.getBankId()))
 		{
@@ -41,5 +42,4 @@ public final class ATM
 		}
 		throw new ATMException("Bank does not exist");
 	}
-
 }

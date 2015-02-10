@@ -5,7 +5,10 @@ import se.dreamteam.atm.model.BankReceipt;
 public interface Bank
 {
 	String getBankId();
-	long getBalance(String accountHolderId);
-	long withdrawAmount(int amount);
-	BankReceipt requestReceipt(long transactionId);
+	
+	long getBalance(final String accountHolderId);
+	
+	long withdrawAmount(final int amount);
+	
+	BankReceipt requestReceipt(final long transactionId);
 }

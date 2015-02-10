@@ -1,15 +1,15 @@
 package se.dreamteam.atm.exception;
 
-public class ATMException extends RuntimeException
+public final class ATMException extends RuntimeException
 {
 	private static final long serialVersionUID = 9187187163143195697L;
 
-	public ATMException(String message, Throwable clause)
+	public ATMException(final String message, final Throwable clause)
 	{
 		super(message, clause);
 	}
 
-	public ATMException(String message)
+	public ATMException(final String message)
 	{
 		super(message);
 	}

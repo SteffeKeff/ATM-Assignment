@@ -9,9 +9,9 @@ import se.dreamteam.atm.model.ATMReceipt;
 public final class ATMSessionImpl extends AbstractATMSession
 {
 	private long transactionID;
-	private Date date;
+	private final Date date;
 
-	public ATMSessionImpl(final ATMCard atmCard,final Bank bank)
+	public ATMSessionImpl(final ATMCard atmCard, final Bank bank)
 	{
 		super(atmCard, bank);
 		date = new Date();
@@ -27,8 +27,7 @@ public final class ATMSessionImpl extends AbstractATMSession
 				if (bank.getBalance(atmCard.getAccountHolderId()) > amount)
 				{
 					transactionID = hashCode();		
-					long withdrawn = bank.withdrawAmount(amount);
-					return withdrawn;
+					return bank.withdrawAmount(amount);
 				}
 				throw new ATMException("Not enough funds");
 			}
@@ -81,7 +80,7 @@ public final class ATMSessionImpl extends AbstractATMSession
 	@Override
 	public long getTransactionId()
 	{
-		if(transactionID != 0) return transactionID;
+		if(transactionID != 0) { return transactionID; }
 		throw new ATMException("Not valid request");
 	}
 }

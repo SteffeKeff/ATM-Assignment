@@ -35,5 +35,4 @@ public final class ATMReceipt
 	{
 		return "ATMReceipt [transactionId=" + transactionId + ", amount=" + amount + ", date=" + date + "]";
 	}
-
 }

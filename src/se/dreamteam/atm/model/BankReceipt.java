@@ -9,7 +9,7 @@ public final class BankReceipt
 	private final int amount;
 	private final Date date;
 
-	public BankReceipt(String bankId, long transactionId, int amount)
+	public BankReceipt(final String bankId, final long transactionId, final int amount)
 	{
 		this.bankId = bankId;
 		this.transactionId = transactionId;

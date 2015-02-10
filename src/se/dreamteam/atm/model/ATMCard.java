@@ -6,7 +6,7 @@ public final class ATMCard
 	private final String bankId;
 	private final int pin;
 
-	public ATMCard(String accountHolderId, String bankId, int pin)
+	public ATMCard(final String accountHolderId, final String bankId, final int pin)
 	{
 		this.accountHolderId = accountHolderId;
 		this.bankId = bankId;
@@ -23,7 +23,7 @@ public final class ATMCard
 		return bankId;
 	}
 
-	public boolean verifyPin(int pin)
+	public boolean verifyPin(final int pin)
 	{
 		return this.pin == pin;
 	}
