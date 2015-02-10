@@ -1,8 +1,7 @@
 package se.dreamteam.atm.service.test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -13,14 +12,10 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import com.sun.management.jmx.Trace;
 
 import se.dreamteam.atm.model.ATMCard;
 import se.dreamteam.atm.model.ATMReceipt;
@@ -57,7 +52,6 @@ public final class ATMSessionImplTest
 		banks = new ArrayList<>();
 		banks.add(bank);
 		atm = new ATM(banks);
-
 	}
 
 	@After

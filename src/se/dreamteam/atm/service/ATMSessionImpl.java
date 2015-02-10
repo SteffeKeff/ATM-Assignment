@@ -5,12 +5,10 @@ import java.util.Date;
 import se.dreamteam.atm.exception.ATMException;
 import se.dreamteam.atm.model.ATMCard;
 import se.dreamteam.atm.model.ATMReceipt;
-import se.dreamteam.atm.model.BankReceipt;
 
 public final class ATMSessionImpl extends AbstractATMSession
 {
 	private long transactionID;
-	private int amount;
 	private Date date;
 
 	public ATMSessionImpl(final ATMCard atmCard,final Bank bank)
@@ -28,22 +26,21 @@ public final class ATMSessionImpl extends AbstractATMSession
 			{
 				if (bank.getBalance(atmCard.getAccountHolderId()) > amount)
 				{
-					transactionID = hashCode();					
-					this.amount = (int) bank.withdrawAmount(amount);
-					System.out.println("inside withdrawAmount :"+ this.amount);
-					return this.amount;
+					transactionID = hashCode();		
+					long withdrawn = bank.withdrawAmount(amount);
+					return withdrawn;
 				}
 				throw new ATMException("Not enough funds");
 			}
 			throw new ATMException("The amount is not valid");
 		}
-		throw new ATMException("Session was terminated");
+		throw new ATMException("ATM Session has expired");
 	}
 
 	@Override
 	public ATMReceipt requestReceipt(final long transactionId)
 	{
-		return new ATMReceipt(transactionId, this.amount);
+		return new ATMReceipt(transactionId, bank.requestReceipt(transactionId).getAmount());
 	}
 
 	@Override
