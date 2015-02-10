@@ -2,6 +2,7 @@ package se.dreamteam.atm.test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
@@ -105,14 +106,19 @@ public final class ATMTest
 	@Test
 	public final void ATMExceptionThrownWhenExitSessionMethodCalledTwice()
 	{
-		// expectedException.expect(ATMException.class);
-		// Behöver fixas!!
+		expectedException.expect(ATMException.class);
+		expectedException.expectMessage("Session is terminated");
+		
+		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		
+		ATMSI.withdrawAmount(1000);
+		ATMSI.withdrawAmount(1500);
 	}
 
 	@Test
 	public final void AllPublicMethodsTestedInATMSessionImpl()
 	{
-		
+		fail();
 	}
 
 	@Test

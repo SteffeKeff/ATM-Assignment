@@ -7,6 +7,7 @@ import se.dreamteam.atm.model.BankReceipt;
 
 public class ATMSessionImpl extends AbstractATMSession
 {
+	private boolean terminatedSession;
 
 	public ATMSessionImpl(ATMCard atmCard, Bank bank)
 	{
@@ -16,11 +17,17 @@ public class ATMSessionImpl extends AbstractATMSession
 	@Override
 	public long withdrawAmount(int amount)
 	{
+		if(terminatedSession) throw new ATMException("Session is terminated");
 		if (amount > checkBalance()) throw new ATMException("Not enough money");
-		if(amount < 100 || amount > 10000 || amount%100 != 0){
+		if (amount < 100 || amount > 10000 || amount % 100 != 0)
+		{
 			throw new ATMException("The amount is not valid");
 		}
-		return bank.withdrawAmount(amount);
+		else
+		{
+			terminatedSession = true;
+			return bank.withdrawAmount(amount);
+		}
 	}
 
 	@Override
