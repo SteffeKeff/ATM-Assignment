@@ -31,14 +31,13 @@ import se.dreamteam.atm.service.Bank;
 @RunWith(MockitoJUnitRunner.class)
 public final class ATMTest
 {
-
 	private ATM atm;
 	private List<Bank> banks;
-	private ATMCard atmCard1;
-	private ATMCard atmCard2;
-	private String bankId = "SEB";
-	private String invalidBank = "SBAB";
-	private String accountHolderId1 = "Stefan";
+	private ATMCard validAtmCard;
+	private ATMCard invalidAtmCard;
+	private String validBankId = "SEB";
+	private String invalidBankId = "SBAB";
+	private String accountHolderId = "Stefan";
 	private int correctPin = 1234;
 	private int invalidPin = 1111;
 
@@ -51,15 +50,15 @@ public final class ATMTest
 	@Before
 	public final void setUp()
 	{
-		when(bank.getBankId()).thenReturn(bankId);
-		when(bank.getBalance(accountHolderId1)).thenReturn(3000L);
+		when(bank.getBankId()).thenReturn(validBankId);
+		when(bank.getBalance(accountHolderId)).thenReturn(3000L);
 
 		banks = new ArrayList<>();
 		banks.add(bank);
 		atm = new ATM(banks);
 
-		atmCard1 = new ATMCard(accountHolderId1, bank.getBankId(), correctPin);
-		atmCard2 = new ATMCard(accountHolderId1, invalidBank, correctPin);
+		validAtmCard = new ATMCard(accountHolderId, bank.getBankId(), correctPin);
+		invalidAtmCard = new ATMCard(accountHolderId, invalidBankId, correctPin);
 	}
 
 	@After
@@ -74,7 +73,7 @@ public final class ATMTest
 		expectedException.expect(ATMException.class);
 		expectedException.expectMessage("The amount is not valid");
 
-		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSession ATMSI = atm.verifyPin(correctPin, validAtmCard);
 		ATMSI.withdrawAmount(90);
 	}
 
@@ -84,7 +83,7 @@ public final class ATMTest
 		expectedException.expect(ATMException.class);
 		expectedException.expectMessage("The amount is not valid");
 
-		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSession ATMSI = atm.verifyPin(correctPin, validAtmCard);
 		ATMSI.withdrawAmount(10001);
 	}
 
@@ -94,7 +93,7 @@ public final class ATMTest
 		expectedException.expect(ATMException.class);
 		expectedException.expectMessage("The amount is not valid");
 
-		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSession ATMSI = atm.verifyPin(correctPin, validAtmCard);
 		ATMSI.withdrawAmount(189);
 	}
 
@@ -104,7 +103,7 @@ public final class ATMTest
 		expectedException.expect(ATMSecurityException.class);
 		expectedException.expectMessage("Invalid pincode");
 
-		atm.verifyPin(invalidPin, atmCard1);
+		atm.verifyPin(invalidPin, validAtmCard);
 	}
 
 	@Test
@@ -113,7 +112,7 @@ public final class ATMTest
 		expectedException.expect(ATMException.class);
 		expectedException.expectMessage("Bank does not exist");
 
-		atm.verifyPin(correctPin, atmCard2);
+		atm.verifyPin(correctPin, invalidAtmCard);
 	}
 
 	@Test
@@ -122,18 +121,18 @@ public final class ATMTest
 		expectedException.expect(ATMException.class);
 		expectedException.expectMessage("ATM Session has expired");
 
-		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSession ATMSI = atm.verifyPin(correctPin, validAtmCard);
 		ATMSI.withdrawAmount(1000);
 		ATMSI.withdrawAmount(1500);
 	}
-	
+
 	@Test
 	public final void ATMExceptionThrownWhenCheckBalanceCalledTwice()
 	{
 		expectedException.expect(ATMException.class);
 		expectedException.expectMessage("ATM Session has expired");
 
-		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSession ATMSI = atm.verifyPin(correctPin, validAtmCard);
 		ATMSI.checkBalance();
 		ATMSI.checkBalance();
 	}
@@ -153,18 +152,18 @@ public final class ATMTest
 		expectedException.expect(ATMException.class);
 		expectedException.expectMessage("The amount is not valid");
 
-		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSession ATMSI = atm.verifyPin(correctPin, validAtmCard);
 		ATMSI.withdrawAmount(3001);
 	}
 
 	@Test
 	public final void shouldReturnValidReceipt()
 	{
-		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSession ATMSI = atm.verifyPin(correctPin, validAtmCard);
 		ATMSI.withdrawAmount(100);
 		final long transactionId = ATMSI.getTransactionId();
 
-		when(bank.requestReceipt(transactionId)).thenReturn(new BankReceipt(bankId, transactionId, 100));
+		when(bank.requestReceipt(transactionId)).thenReturn(new BankReceipt(validBankId, transactionId, 100));
 
 		assertThat("ATMReceipt should contain valid transactionId",
 				ATMSI.requestReceipt(transactionId).getTransactionId(),
@@ -184,13 +183,12 @@ public final class ATMTest
 	@Test
 	public final void shouldReturnValidBalance()
 	{
-		ATMSession ATMSI = atm.verifyPin(correctPin, atmCard1);
+		ATMSession ATMSI = atm.verifyPin(correctPin, validAtmCard);
 
-		when(bank.getBalance(accountHolderId1)).thenReturn((long) 100);
+		when(bank.getBalance(accountHolderId)).thenReturn((long) 100);
 
 		assertThat("should return valid balance", ATMSI.checkBalance(), is((long) 100));
 
-		verify(bank).getBalance(accountHolderId1);
+		verify(bank).getBalance(accountHolderId);
 	}
-
 }

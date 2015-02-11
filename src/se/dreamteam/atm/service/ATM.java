@@ -14,7 +14,7 @@ public final class ATM
 
 	public ATM(final List<Bank> banks)
 	{
-		if (banks.isEmpty())
+		if (banks == null || banks.isEmpty())
 		{
 			throw new IllegalArgumentException("Bank list is empty");
 		}

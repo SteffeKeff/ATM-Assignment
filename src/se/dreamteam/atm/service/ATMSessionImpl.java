@@ -20,7 +20,7 @@ public final class ATMSessionImpl extends AbstractATMSession
 	@Override
 	public long withdrawAmount(final int amount)
 	{
-		if (transactionID == 0)
+		if (isSessionValid())
 		{
 			if (amount >= 100 && amount <= 10000 && amount % 100 == 0)
 			{
@@ -37,20 +37,32 @@ public final class ATMSessionImpl extends AbstractATMSession
 	}
 
 	@Override
+	public long checkBalance()
+	{
+		if (isSessionValid())
+		{
+			transactionID = hashCode();
+			return bank.getBalance(atmCard.getAccountHolderId());
+		}
+		throw new ATMException("ATM Session has expired");
+	}
+	
+	private boolean isSessionValid()
+	{
+		return transactionID == 0;
+	}
+
+	@Override
 	public ATMReceipt requestReceipt(final long transactionId)
 	{
 		return new ATMReceipt(transactionId, bank.requestReceipt(transactionId).getAmount());
 	}
 
 	@Override
-	public long checkBalance()
+	public long getTransactionId()
 	{
-		if (transactionID == 0)
-		{
-			transactionID = hashCode();
-			return bank.getBalance(atmCard.getAccountHolderId());
-		}
-		throw new ATMException("ATM Session has expired");
+		if(transactionID != 0) { return transactionID; }
+		throw new ATMException("Not valid request");
 	}
 	
 	@Override
@@ -75,12 +87,5 @@ public final class ATMSessionImpl extends AbstractATMSession
 		}
 		else if (!date.equals(other.date)) { return false; }
 		return true;
-	}
-
-	@Override
-	public long getTransactionId()
-	{
-		if(transactionID != 0) { return transactionID; }
-		throw new ATMException("Not valid request");
 	}
 }
